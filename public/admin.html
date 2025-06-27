@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel de Denúncias - Admin</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .denuncia {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    .denuncia strong {
+      display: inline-block;
+      min-width: 70px;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    if (localStorage.getItem('logado') !== 'true') {
+      window.location.href = '/login';
+    }
+  </script>
+
+  <h1>Denúncias Recebidas</h1>
+  <div id="lista-denuncias"></div>
+
+  <script>
+    async function carregarDenuncias() {
+      try {
+        const resposta = await fetch('/api/denuncias');
+        const denuncias = await resposta.json();
+
+        const container = document.getElementById('lista-denuncias');
+        if (denuncias.length === 0) {
+          container.innerHTML = '<p>Nenhuma denúncia registrada.</p>';
+          return;
+        }
+
+        denuncias.forEach(denuncia => {
+          const div = document.createElement('div');
+          div.className = 'denuncia';
+          div.innerHTML = `
+            <p><strong>Nome:</strong> ${denuncia.nome}</p>
+            <p><strong>Email:</strong> ${denuncia.email}</p>
+            <p><strong>Telefone:</strong> ${denuncia.telefone}</p>
+            <p><strong>Mensagem:</strong> ${denuncia.mensagem}</p>
+          `;
+          container.appendChild(div);
+        });
+      } catch (erro) {
+        console.error('Erro ao carregar denúncias:', erro);
+      }
+    }
+
+    carregarDenuncias();
+  </script>
+</body>
+</html>
